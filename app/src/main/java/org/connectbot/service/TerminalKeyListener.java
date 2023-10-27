@@ -331,25 +331,11 @@ public class TerminalKeyListener implements OnKeyListener, OnSharedPreferenceCha
 
 			// Ask the system to use the keymap to give us the unicode character for this key,
 			// with our derived modifier state applied.
-			int uchar = event.getUnicodeChar(derivedMetaState & ~HC_META_CTRL_MASK);
-			int ucharWithoutAlt = event.getUnicodeChar(
+			int uchar = event.getUnicodeChar(
 					derivedMetaState & ~(HC_META_ALT_MASK | HC_META_CTRL_MASK));
-			if (uchar == 0) {
-				// Keymap doesn't know the key with alt on it, so just go with the unmodified version
-				uchar = ucharWithoutAlt;
-			} else if (uchar != ucharWithoutAlt) {
-				// The alt key was used to modify the character returned; therefore, drop the alt
-				// modifier from the state so we don't end up sending alt+key.
-				derivedMetaState &= ~HC_META_ALT_MASK;
-			}
 
 			// Remove shift from the modifier state as it has already been used by getUnicodeChar.
 			derivedMetaState &= ~KeyEvent.META_SHIFT_ON;
-
-			if ((uchar & KeyCharacterMap.COMBINING_ACCENT) != 0) {
-				mDeadKey = uchar & KeyCharacterMap.COMBINING_ACCENT_MASK;
-				return true;
-			}
 
 			if (mDeadKey != 0) {
 				uchar = KeyCharacterMap.getDeadChar(mDeadKey, keyCode);
