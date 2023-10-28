@@ -179,7 +179,8 @@ public class TerminalBridge implements VDUDisplay {
 		// create our default paint
 		defaultPaint = new Paint();
 		defaultPaint.setAntiAlias(true);
-		defaultPaint.setTypeface(Typeface.MONOSPACE);
+		Typeface nerdFont = manager.getResources().getFont(R.font.victor_nerd);
+		defaultPaint.setTypeface(nerdFont);
 		defaultPaint.setFakeBoldText(true); // more readable?
 
 		refreshOverlayFontSize();
