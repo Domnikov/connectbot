@@ -671,7 +671,6 @@ public void setScreenSize(int c, int r, boolean broadcast) {
   boolean vt52mode = false;
   boolean keypadmode = false; /* false - numeric, true - application */
   boolean output8bit = false;
-  int normalcursor = 0;
   boolean moveoutsidemargins = true;
   boolean wraparound = true;
   boolean sendcrlf = true;
@@ -715,6 +714,7 @@ public void setScreenSize(int c, int r, boolean broadcast) {
   private final static int TSTATE_CSI_TICKS = 16;
   private final static int TSTATE_CSI_EQUAL = 17; /* ESC [ = */
   private final static int TSTATE_TITLE = 18; /* xterm title */
+  private final static int TSTATE_CSI_CURSOR = 19;
 
   /* Keys we support */
   public final static int KEY_PAUSE = 1;
@@ -2398,6 +2398,16 @@ public void setScreenSize(int c, int r, boolean broadcast) {
             break;
         }
         break;
+      case TSTATE_CSI_CURSOR:
+        if (c == 'q') {
+          if (DCEvars[0] >= 0 && DCEvars[0] <=6 ) {
+            cursorshape = DCEvars[0];
+          } else {
+            cursorshape = 0;
+          }
+        }
+        term_state = TSTATE_DATA;
+        break;
       case TSTATE_CSI_TICKS:
         term_state = TSTATE_DATA;
         switch (c) {
@@ -2503,6 +2513,9 @@ public void setScreenSize(int c, int r, boolean broadcast) {
       case TSTATE_CSI:
         term_state = TSTATE_DATA;
         switch (c) {
+          case ' ':
+            term_state = TSTATE_CSI_CURSOR;
+            break;
           case '"':
             term_state = TSTATE_CSI_TICKS;
             break;

@@ -59,6 +59,7 @@ public class VDUBuffer {
   // cursor variables
   protected boolean showcursor = true;
   protected int cursorX, cursorY;
+  int cursorshape = 0; /* 0 - blinking block; 1 - blinking block (default); 2 - steady block; 3 - blinking underline; 4 - steady underline; 5 - blinking bar; 6 - steady bar */
 
   /** Scroll up when inserting a line. */
   public final static boolean SCROLL_UP = false;
@@ -571,6 +572,21 @@ public class VDUBuffer {
    */
   public boolean isCursorVisible() {
     return showcursor;
+  }
+
+  /**
+   * Return cursor shape
+   * 0 - blinking block;
+   * 1 - blinking block (default);
+   * 2 - steady block;
+   * 3 - blinking underline;
+   * 4 - steady underline;
+   * 5 - blinking bar;
+   * 6 - steady bar
+   * @return cursor shape
+   */
+  public int GetCursorShape() {
+    return cursorshape;
   }
 
   /**

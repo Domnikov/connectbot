@@ -410,6 +410,7 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 
 			// also draw cursor if visible
 			if (bridge.buffer.isCursorVisible()) {
+				int cursorShape = bridge.buffer.GetCursorShape();
 				int cursorColumn = bridge.buffer.getCursorColumn();
 				final int cursorRow = bridge.buffer.getCursorRow();
 
@@ -440,12 +441,30 @@ public class TerminalView extends FrameLayout implements FontSizeChangedListener
 
 				int metaState = bridge.getKeyHandler().getMetaState();
 				if (y + bridge.charHeight < bridge.bitmap.getHeight()) {
-					Bitmap underCursor = Bitmap.createBitmap(bridge.bitmap, x, y,
-							bridge.charWidth * (onWideCharacter ? 2 : 1), bridge.charHeight);
+					int width = bridge.charWidth * (onWideCharacter ? 2 : 1);
+					int height = bridge.charHeight;
+					switch (cursorShape) {
+					    case 0: // blinking block;
+					    case 1: // blinking block (default);
+					    case 2: // steady block;
+							// Do nothing
+							break;
+					    case 3: // blinking underline;
+					    case 4: // steady underline;
+							height = 2;
+							break;
+					    case 5: // blinking bar;
+					    case 6: // steady bar/
+							width = 2;
+							break;
+					}
+					Bitmap underCursor = Bitmap.createBitmap(bridge.bitmap,
+							x, (y + bridge.charHeight - height),
+							width, height);
 					if (metaState == 0)
-						canvas.drawBitmap(underCursor, 0, 0, cursorInversionPaint);
+						canvas.drawBitmap(underCursor, 0, (bridge.charHeight - height), cursorInversionPaint);
 					else
-						canvas.drawBitmap(underCursor, 0, 0, cursorMetaInversionPaint);
+						canvas.drawBitmap(underCursor, 0, (bridge.charHeight - height), cursorMetaInversionPaint);
 				} else {
 					canvas.drawPaint(cursorPaint);
 				}
