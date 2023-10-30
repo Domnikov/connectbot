@@ -184,8 +184,9 @@ public class TerminalTextViewOverlay extends androidx.appcompat.widget.AppCompat
 		}
 
 		// Mouse input is treated differently:
+		final int source = MotionEventCompat.getSource(event);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH &&
-				MotionEventCompat.getSource(event) == InputDevice.SOURCE_MOUSE) {
+				(source & InputDevice.SOURCE_MOUSE) != 0) {
 			if (onMouseEvent(event, terminalView.bridge)) {
 				return true;
 			}
@@ -242,7 +243,7 @@ public class TerminalTextViewOverlay extends androidx.appcompat.widget.AppCompat
 		boolean mouseReport = vtBuffer.isMouseReportEnabled();
 
 		// MouseReport can be "defeated" using the shift key.
-		if (!mouseReport || shiftOn) {
+		if (/*!mouseReport || */shiftOn) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				if (event.getButtonState() == MotionEvent.BUTTON_TERTIARY) {
 					// Middle click pastes.
